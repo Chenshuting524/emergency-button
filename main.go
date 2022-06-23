@@ -67,7 +67,7 @@ type Tokenlist struct {
 func init() {
 	flag.Uint64Var(&poolId, "pool", 0, "pool id if needed")
 	flag.Uint64Var(&chainId, "chain", 0, "chain id if single chainId needed")
-	flag.StringVar(&tokenFile, "token", "../ConfigJso/TokenWithLP.json", "token configuration file path")
+	flag.StringVar(&tokenFile, "token", "../ConfigJson/TokenWithLP.json", "token configuration file path")
 	flag.StringVar(&confFile, "conf", "../ConfigJson/zionDevConfig.json", "configuration file path")
 	flag.StringVar(&pkconfFile, "pkconf", "../PKConfig/PkConfig.json", "PrivateKey configuration file path")
 	flag.Float64Var(&multiple, "mul", 1, "multiple of gasPrice, actual_gasPrice = suggested_gasPrice * mul ")
@@ -301,7 +301,7 @@ func main() {
 					if i == j {
 						continue
 					}
-					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, tokens[i].NetCfg.LockProxy, tokens[i].Address, tokens[j].ChainId)
+					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, common.HexToAddress(tokens[i].NetCfg.LockProxy), tokens[i].Address, tokens[j].ChainId)
 					if err != nil {
 						err = fmt.Errorf(
 							"fail to shut %s from chain %d =>to=> chain %d , %s",
@@ -416,7 +416,7 @@ func main() {
 					if i == j {
 						continue
 					}
-					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, tokens[i].NetCfg.LockProxy, tokens[i].Address, tokens[j].ChainId)
+					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, common.HexToAddress(tokens[i].NetCfg.LockProxy), tokens[i].Address, tokens[j].ChainId)
 					if err != nil {
 						err = fmt.Errorf(
 							"fail to bind %s from chain %d =>to=> chain %d , %s",
@@ -535,7 +535,7 @@ func main() {
 		if err != nil {
 			log.Fatal("fail to dial %s , %s", fromAsset.NetCfg.Provider, err)
 		}
-		mappedAsset, err := shutTools.TokenMap(client, fromAsset.NetCfg, fromAsset.NetCfg.LockProxy, fromAsset.Address, toAsset.ChainId)
+		mappedAsset, err := shutTools.TokenMap(client, fromAsset.NetCfg, common.HexToAddress(fromAsset.NetCfg.LockProxy), fromAsset.Address, toAsset.ChainId)
 		if err != nil {
 			log.Fatalf(
 				"fail to bind %s from chain %d =>to=> chain %d , %s",
@@ -625,7 +625,7 @@ func main() {
 		if err != nil {
 			log.Fatal("fail to dial %s , %s", fromAsset.NetCfg.Provider, err)
 		}
-		mappedAsset, err := shutTools.TokenMap(client, fromAsset.NetCfg, fromAsset.NetCfg.LockProxy, fromAsset.Address, toChainId)
+		mappedAsset, err := shutTools.TokenMap(client, fromAsset.NetCfg, common.HexToAddress(fromAsset.NetCfg.LockProxy), fromAsset.Address, toChainId)
 		if err != nil {
 			log.Fatalf(
 				"fail to shut %s from chain %d =>to=> chain %d , %s",
@@ -716,7 +716,7 @@ func main() {
 					if i == j {
 						continue
 					}
-					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, tokens[i].NetCfg.LockProxy, tokens[i].Address, tokens[j].ChainId)
+					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, common.HexToAddress(tokens[i].NetCfg.LockProxy), tokens[i].Address, tokens[j].ChainId)
 					if err != nil {
 						log.Errorf(
 							"fail to check %s from chain %d =>to=> chain %d , %s",
@@ -793,7 +793,7 @@ func main() {
 					if i == j {
 						continue
 					}
-					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, tokens[i].NetCfg.LockProxy, tokens[i].Address, tokens[j].ChainId)
+					toAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, common.HexToAddress(tokens[i].NetCfg.LockProxy), tokens[i].Address, tokens[j].ChainId)
 					if err != nil {
 						log.Errorf(
 							"fail to check %s from chain %d =>to=> chain %d , %s",
@@ -1142,7 +1142,7 @@ func main() {
 				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
 				continue
 			}
-			netCfg := conf.GetNetwork(uint64(id))
+			netCfg:= conf.GetNetwork(uint64(id))
 			if netCfg == nil {
 				log.Fatalf("network with chainId %d not found in %s", id, confFile)
 			}
@@ -1160,6 +1160,7 @@ func main() {
 				}
 				pkCfg := PKconfig.GetSenderPrivateKey(netCfgs[i].PrivateKeyNo)
 				if pkCfg == nil {
+					log.Info(netCfgs[i],netCfgs[i].PrivateKeyNo)
 					log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfgs[i].PrivateKeyNo)
 				}
 
@@ -1201,7 +1202,7 @@ func main() {
 						netCfgs[i],
 						pkCfg,
 						netCfgs[j].PolyChainID,
-						netCfgs[j].LockProxy.Bytes())
+						common.HexToAddress(netCfgs[j].LockProxy).Bytes())
 					if err != nil {
 						err = fmt.Errorf(
 							"fail to bind proxy from chain %d =>to=> chain %d , %s",
@@ -1277,7 +1278,7 @@ func main() {
 							netCfgs[i].PolyChainID,
 							netCfgs[j].PolyChainID)
 						continue
-					} else if bytes.Equal(toProxy, netCfgs[j].LockProxy.Bytes()) {
+					} else if bytes.Equal(toProxy, common.HexToAddress(netCfgs[j].LockProxy).Bytes()) {
 						log.Infof(
 							"proxy from chain %d =>to=> chain %d is binded",
 							netCfgs[i].PolyChainID,
@@ -1361,7 +1362,7 @@ func main() {
 			fromProxy,
 			pkCfg,
 			toProxy.PolyChainID,
-			toProxy.LockProxy.Bytes())
+			common.HexToAddress(toProxy.LockProxy).Bytes())
 		if err != nil {
 			log.Fatalf(
 				"fail to bind proxy from chain %d =>to=> chain %d , %s",
@@ -1371,266 +1372,6 @@ func main() {
 		}
 		log.Infof("bindProxy: %d =>to=> %d pair has been bind", fromProxy.PolyChainID, toProxy.PolyChainID)
 		log.Info("Done.")
-	case "checkFeeCollected":
-		log.Info("Processing...")
-		args := flag.Args()
-		if all || len(args) == 0 {
-			args = conf.GetNetworkIds()
-		}
-		sig := make(chan Msg, 20)
-		cnt := 0
-		for i := 0; i < len(args); i++ {
-			id, err := strconv.Atoi(args[i])
-			if err != nil {
-				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
-				continue
-			}
-			netCfg := conf.GetNetwork(uint64(id))
-			if netCfg == nil {
-				log.Errorf("network with chainId %d not found in config file", id)
-				continue
-			}
-			client, err := ethclient.Dial(netCfg.Provider)
-			if err != nil {
-				log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
-				continue
-			}
-			func() {
-				log.Infof("Checking %s ...", netCfg.Name)
-				time.Sleep(500 * time.Millisecond)
-				bs, err := client.BalanceAt(context.Background(), netCfg.Swapper, nil)
-				if err != nil {
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				}
-				bw, err := client.BalanceAt(context.Background(), netCfg.Wrapper, nil)
-				if err != nil {
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				}
-				if netCfg.Swapper == ADDRESS_ZERO {
-					bs = big.NewInt(0)
-				}
-				if netCfg.Wrapper == ADDRESS_ZERO {
-					bw = big.NewInt(0)
-				}
-				balanceSwapper := big.NewFloat(0)
-				balanceWrapper := big.NewFloat(0)
-				balanceSwapper.SetString(bs.String())
-				balanceWrapper.SetString(bw.String())
-				balanceSwapper.Quo(balanceSwapper, big.NewFloat(math.Pow(10, 18)))
-				balanceWrapper.Quo(balanceWrapper, big.NewFloat(math.Pow(10, 18)))
-				if err != nil {
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				}
-				log.Infof("Balance of swapper (nativeToken) at %s is %f ", netCfg.Name, balanceSwapper)
-				log.Infof("Balance of wrapper (nativeToken) at %s is %f ", netCfg.Name, balanceWrapper)
-				sig <- Msg{netCfg.PolyChainID, err}
-			}()
-			cnt += 1
-		}
-		for msg := range sig {
-			cnt -= 1
-			if msg.Err != nil {
-				log.Error(msg.Err)
-			}
-			if cnt == 0 {
-				log.Info("Done.")
-				break
-			}
-		}
-	case "extractFeeSwapper":
-		log.Info("Processing...")
-		args := flag.Args()
-		if all {
-			args = conf.GetNetworkIds()
-		}
-		sig := make(chan Msg, 10)
-		cnt := 0
-		for i := 0; i < len(args); i++ {
-			id, err := strconv.Atoi(args[i])
-			if err != nil {
-				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
-				continue
-			}
-			netCfg := conf.GetNetwork(uint64(id))
-			if netCfg == nil {
-				log.Errorf("network with chainId %d not found in config file", id)
-				continue
-			}
-
-			pkCfg := PKconfig.GetSenderPrivateKey(netCfg.PrivateKeyNo)
-			if pkCfg == nil {
-				log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfg.PrivateKeyNo)
-			}
-			err = pkCfg.PhraseSwapperFeeCollectorPrivateKey()
-			if err != nil {
-				log.Errorf("%v", err)
-				continue
-			}
-			client, err := ethclient.Dial(netCfg.Provider)
-			if err != nil {
-				log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
-				continue
-			}
-			go func() {
-				log.Infof("Extract fee from swapper at %s ...", netCfg.Name)
-
-				balance, err := client.BalanceAt(context.Background(), netCfg.Swapper, nil)
-				if err != nil {
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				}
-				zeroBalance := balance.Int64() == 0
-				if zeroBalance && !force {
-					log.Warnf("Swapper at chain %d do not have balance, ignored", netCfg.PolyChainID)
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				} else if zeroBalance && force {
-					log.Warnf("Swapper at chain %d do not have balance, still force extractFee", netCfg.PolyChainID)
-				}
-
-				err = shutTools.ExtractFeeSwapper(multiple, client, netCfg, pkCfg, ADDRESS_ZERO)
-				sig <- Msg{netCfg.PolyChainID, err}
-			}()
-			cnt += 1
-		}
-		for msg := range sig {
-			cnt -= 1
-			if msg.Err != nil {
-				log.Error(msg.Err)
-			} else {
-				log.Infof("Fee has been taken from swapper at chain %d .", msg.ChainId)
-			}
-			if cnt == 0 {
-				log.Info("Done.")
-				break
-			}
-		}
-	case "extractFeeWrapper":
-		log.Info("Processing...")
-		args := flag.Args()
-		if all {
-			args = conf.GetNetworkIds()
-		}
-		sig := make(chan Msg, 10)
-		cnt := 0
-		for i := 0; i < len(args); i++ {
-			id, err := strconv.Atoi(args[i])
-			if err != nil {
-				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
-				continue
-			}
-			netCfg := conf.GetNetwork(uint64(id))
-			if netCfg == nil {
-				log.Errorf("network with chainId %d not found in config file", id)
-				continue
-			}
-
-			pkCfg := PKconfig.GetSenderPrivateKey(netCfg.PrivateKeyNo)
-			if pkCfg == nil {
-				log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfg.PrivateKeyNo)
-			}
-
-			err = pkCfg.PhraseWrapperFeeCollectorPrivateKey()
-			if err != nil {
-				log.Errorf("%v", err)
-				continue
-			}
-			client, err := ethclient.Dial(netCfg.Provider)
-			if err != nil {
-				log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
-				continue
-			}
-			go func() {
-				log.Infof("Extract fee from wrapper at %s ...", netCfg.Name)
-
-				balance, err := client.BalanceAt(context.Background(), netCfg.Wrapper, nil)
-				if err != nil {
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				}
-				zeroBalance := balance.Int64() == 0
-				if zeroBalance && !force {
-					log.Warnf("Wrapper at chain %d do not have balance, ignored", netCfg.PolyChainID)
-					sig <- Msg{netCfg.PolyChainID, err}
-					return
-				} else if zeroBalance && force {
-					log.Warnf("Wrapper at chain %d do not have balance, still force extractFee", netCfg.PolyChainID)
-				}
-
-				err = shutTools.ExtractFeeWrapper(multiple, client, netCfg, pkCfg, ADDRESS_ZERO)
-				sig <- Msg{netCfg.PolyChainID, err}
-			}()
-			cnt += 1
-		}
-		for msg := range sig {
-			cnt -= 1
-			if msg.Err != nil {
-				log.Error(msg.Err)
-			} else {
-				log.Infof("Fee has been taken from wrapper at chain %d .", msg.ChainId)
-			}
-			if cnt == 0 {
-				log.Info("Done.")
-				break
-			}
-		}
-	case "deployToken":
-		log.Info("Token Depoly...")
-		args := flag.Args()
-		if len(args) != 1 {
-			log.Fatal("Arg num not match")
-		}
-		id, err := strconv.Atoi(args[0])
-		if err != nil {
-			log.Errorf("can not parse arg %d : %s , %v", 0, args[0], err)
-		}
-		netCfg := conf.GetNetwork(uint64(id))
-		if netCfg == nil {
-			log.Errorf("network with chainId %d not found in config file", id)
-		}
-
-		tokenConfig, err := config.LoadToken(tokenFile)
-		if err != nil {
-			log.Fatal("LoadToken fail", err)
-		}
-		client, err := ethclient.Dial(netCfg.Provider)
-		if err != nil {
-			log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
-		}
-
-		pkCfg := PKconfig.GetSenderPrivateKey(netCfg.PrivateKeyNo)
-		if pkCfg == nil {
-			log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfg.PrivateKeyNo)
-		}
-		fmt.Println("enter", netCfg.PrivateKeyNo)
-
-		LptokenAddress, err := shutTools.DeployToken(multiple, client, netCfg, pkCfg, tokenConfig, pip4)
-		if err != nil {
-			log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
-		}
-
-		log.Info("token deploy success, hash is %s", LptokenAddress)
-
-		token := tokenConfig.GetToken(uint64(id))
-		if pip4 {
-			token.LPAddress = LptokenAddress
-		} else {
-			token.Address = LptokenAddress
-		}
-		res2, err := json.MarshalIndent(tokenConfig, " ", "	")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		err = ioutil.WriteFile(tokenFile, res2, 0666)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		log.Info("token write success")
 	case "singleBindLPandAsset":
 		log.Info("Processing...")
 		args := flag.Args()
@@ -1715,7 +1456,7 @@ func main() {
 				toAsset.ChainId,
 				lpmappedAsset)
 		}
-		mappedAsset, err := shutTools.TokenMap(client, fromAsset.NetCfg, fromAsset.NetCfg.LockProxyPip4, fromAsset.Address, toAsset.ChainId)
+		mappedAsset, err := shutTools.TokenMap(client, fromAsset.NetCfg, common.HexToAddress(fromAsset.NetCfg.LockProxyPip4), fromAsset.Address, toAsset.ChainId)
 		if err != nil {
 			log.Fatalf(
 				"fail to bind %s from chain %d =>to=> chain %d , %s",
@@ -1833,7 +1574,7 @@ func main() {
 					if i == j {
 						continue
 					}
-					mappedAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, tokens[i].NetCfg.LockProxyPip4, tokens[i].Address, tokens[j].ChainId)
+					mappedAsset, err := shutTools.TokenMap(client, tokens[i].NetCfg, common.HexToAddress(tokens[i].NetCfg.LockProxyPip4), tokens[i].Address, tokens[j].ChainId)
 					if err != nil {
 						log.Fatalf(
 							"fail to bind %s from chain %d =>to=> chain %d, %s",
@@ -1984,10 +1725,277 @@ func main() {
 				break
 			}
 		}
+	case "bindPIP4Proxy":
+		//todo
+	case "checkFeeCollected":
+		log.Info("Processing...")
+		args := flag.Args()
+		if all || len(args) == 0 {
+			args = conf.GetNetworkIds()
+		}
+		sig := make(chan Msg, 20)
+		cnt := 0
+		for i := 0; i < len(args); i++ {
+			id, err := strconv.Atoi(args[i])
+			if err != nil {
+				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
+				continue
+			}
+			netCfg := conf.GetNetwork(uint64(id))
+			if netCfg == nil {
+				log.Errorf("network with chainId %d not found in config file", id)
+				continue
+			}
+			client, err := ethclient.Dial(netCfg.Provider)
+			if err != nil {
+				log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
+				continue
+			}
+			func() {
+				log.Infof("Checking %s ...", netCfg.Name)
+				time.Sleep(500 * time.Millisecond)
+				bs, err := client.BalanceAt(context.Background(), common.HexToAddress(netCfg.Swapper), nil)
+				if err != nil {
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				}
+				bw, err := client.BalanceAt(context.Background(), common.HexToAddress(netCfg.Wrapper), nil)
+				if err != nil {
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				}
+				if common.HexToAddress(netCfg.Swapper) == ADDRESS_ZERO {
+					bs = big.NewInt(0)
+				}
+				if common.HexToAddress(netCfg.Wrapper) == ADDRESS_ZERO {
+					bw = big.NewInt(0)
+				}
+				balanceSwapper := big.NewFloat(0)
+				balanceWrapper := big.NewFloat(0)
+				balanceSwapper.SetString(bs.String())
+				balanceWrapper.SetString(bw.String())
+				balanceSwapper.Quo(balanceSwapper, big.NewFloat(math.Pow(10, 18)))
+				balanceWrapper.Quo(balanceWrapper, big.NewFloat(math.Pow(10, 18)))
+				if err != nil {
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				}
+				log.Infof("Balance of swapper (nativeToken) at %s is %f ", netCfg.Name, balanceSwapper)
+				log.Infof("Balance of wrapper (nativeToken) at %s is %f ", netCfg.Name, balanceWrapper)
+				sig <- Msg{netCfg.PolyChainID, err}
+			}()
+			cnt += 1
+		}
+		for msg := range sig {
+			cnt -= 1
+			if msg.Err != nil {
+				log.Error(msg.Err)
+			}
+			if cnt == 0 {
+				log.Info("Done.")
+				break
+			}
+		}
+	case "extractFeeSwapper":
+		log.Info("Processing...")
+		args := flag.Args()
+		if all {
+			args = conf.GetNetworkIds()
+		}
+		sig := make(chan Msg, 10)
+		cnt := 0
+		for i := 0; i < len(args); i++ {
+			id, err := strconv.Atoi(args[i])
+			if err != nil {
+				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
+				continue
+			}
+			netCfg := conf.GetNetwork(uint64(id))
+			if netCfg == nil {
+				log.Errorf("network with chainId %d not found in config file", id)
+				continue
+			}
+
+			pkCfg := PKconfig.GetSenderPrivateKey(netCfg.PrivateKeyNo)
+			if pkCfg == nil {
+				log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfg.PrivateKeyNo)
+			}
+			err = pkCfg.PhraseSwapperFeeCollectorPrivateKey()
+			if err != nil {
+				log.Errorf("%v", err)
+				continue
+			}
+			client, err := ethclient.Dial(netCfg.Provider)
+			if err != nil {
+				log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
+				continue
+			}
+			go func() {
+				log.Infof("Extract fee from swapper at %s ...", netCfg.Name)
+
+				balance, err := client.BalanceAt(context.Background(), common.HexToAddress(netCfg.Swapper), nil)
+				if err != nil {
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				}
+				zeroBalance := balance.Int64() == 0
+				if zeroBalance && !force {
+					log.Warnf("Swapper at chain %d do not have balance, ignored", netCfg.PolyChainID)
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				} else if zeroBalance && force {
+					log.Warnf("Swapper at chain %d do not have balance, still force extractFee", netCfg.PolyChainID)
+				}
+
+				err = shutTools.ExtractFeeSwapper(multiple, client, netCfg, pkCfg, ADDRESS_ZERO)
+				sig <- Msg{netCfg.PolyChainID, err}
+			}()
+			cnt += 1
+		}
+		for msg := range sig {
+			cnt -= 1
+			if msg.Err != nil {
+				log.Error(msg.Err)
+			} else {
+				log.Infof("Fee has been taken from swapper at chain %d .", msg.ChainId)
+			}
+			if cnt == 0 {
+				log.Info("Done.")
+				break
+			}
+		}
+	case "extractFeeWrapper":
+		log.Info("Processing...")
+		args := flag.Args()
+		if all {
+			args = conf.GetNetworkIds()
+		}
+		sig := make(chan Msg, 10)
+		cnt := 0
+		for i := 0; i < len(args); i++ {
+			id, err := strconv.Atoi(args[i])
+			if err != nil {
+				log.Errorf("can not parse arg %d : %s , %v", i, args[i], err)
+				continue
+			}
+			netCfg := conf.GetNetwork(uint64(id))
+			if netCfg == nil {
+				log.Errorf("network with chainId %d not found in config file", id)
+				continue
+			}
+
+			pkCfg := PKconfig.GetSenderPrivateKey(netCfg.PrivateKeyNo)
+			if pkCfg == nil {
+				log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfg.PrivateKeyNo)
+			}
+
+			err = pkCfg.PhraseWrapperFeeCollectorPrivateKey()
+			if err != nil {
+				log.Errorf("%v", err)
+				continue
+			}
+			client, err := ethclient.Dial(netCfg.Provider)
+			if err != nil {
+				log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
+				continue
+			}
+			go func() {
+				log.Infof("Extract fee from wrapper at %s ...", netCfg.Name)
+
+				balance, err := client.BalanceAt(context.Background(), common.HexToAddress(netCfg.Wrapper), nil)
+				if err != nil {
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				}
+				zeroBalance := balance.Int64() == 0
+				if zeroBalance && !force {
+					log.Warnf("Wrapper at chain %d do not have balance, ignored", netCfg.PolyChainID)
+					sig <- Msg{netCfg.PolyChainID, err}
+					return
+				} else if zeroBalance && force {
+					log.Warnf("Wrapper at chain %d do not have balance, still force extractFee", netCfg.PolyChainID)
+				}
+
+				err = shutTools.ExtractFeeWrapper(multiple, client, netCfg, pkCfg, ADDRESS_ZERO)
+				sig <- Msg{netCfg.PolyChainID, err}
+			}()
+			cnt += 1
+		}
+		for msg := range sig {
+			cnt -= 1
+			if msg.Err != nil {
+				log.Error(msg.Err)
+			} else {
+				log.Infof("Fee has been taken from wrapper at chain %d .", msg.ChainId)
+			}
+			if cnt == 0 {
+				log.Info("Done.")
+				break
+			}
+		}
+	case "deployToken":
+		log.Info("Token Depoly...")
+		args := flag.Args()
+		if len(args) != 1 {
+			log.Fatal("Arg num not match")
+		}
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			log.Errorf("can not parse arg %d : %s , %v", 0, args[0], err)
+		}
+		netCfg := conf.GetNetwork(uint64(id))
+		if netCfg == nil {
+			log.Errorf("network with chainId %d not found in config file", id)
+		}
+
+		tokenConfig, err := config.LoadToken(tokenFile)
+		if err != nil {
+			log.Fatal("LoadToken fail", err)
+		}
+		client, err := ethclient.Dial(netCfg.Provider)
+		if err != nil {
+			log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
+		}
+
+		pkCfg := PKconfig.GetSenderPrivateKey(netCfg.PrivateKeyNo)
+		if pkCfg == nil {
+			log.Errorf("privatekey with chainId %d not found in PKconfig file", netCfg.PrivateKeyNo)
+		}
+		fmt.Println("enter", netCfg.PrivateKeyNo)
+
+		LptokenAddress, err := shutTools.DeployToken(multiple, client, netCfg, pkCfg, tokenConfig, pip4)
+		if err != nil {
+			log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
+		}
+
+		log.Info("token deploy success, hash is %s", LptokenAddress)
+
+		token := tokenConfig.GetToken(uint64(id))
+		if pip4 {
+			token.LPAddress = LptokenAddress
+		} else {
+			token.Address = LptokenAddress
+		}
+		res2, err := json.MarshalIndent(tokenConfig, " ", "	")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = ioutil.WriteFile(tokenFile, res2, 0666)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		log.Info("token write success")
 	case "Approve":
 		//todo
 		log.Info("Approve Token Depoly...")
-
+	case "SendviaWrapper":
+		//todo
+	case "SendviaLock":
+		//todo
+	case "SetFeeColletor":
+		//todo
 	default:
 		log.Fatal("unknown function", function)
 	}

@@ -12,7 +12,7 @@ import (
 )
 
 func AssetLPMap(client *ethclient.Client, conf *config.Network, token common.Address) (targetToken common.Address, err error) {
-	LockProxyContract, err := abi.NewILockProxyWithLPCaller(conf.LockProxyPip4, client)
+	LockProxyContract, err := abi.NewILockProxyWithLPCaller(common.HexToAddress(conf.LockProxyPip4), client)
 	if err != nil {
 		return ADDRESS_ZERO, fmt.Errorf(
 			fmt.Sprintf(
@@ -46,7 +46,7 @@ func DeployToken(gasMultiple float64, client *ethclient.Client, conf *config.Net
 	var txhash *types.Transaction
 	if f {
 		fmt.Println("pip", token.LPName, token.LPSymbol, token.Decimal)
-		tx, txhash, _, err = abi.DeployERC20PreMint(auth, client, token.LPName, token.LPSymbol, token.Decimal, conf.LockProxyPip4, token.InitSupply)
+		tx, txhash, _, err = abi.DeployERC20PreMint(auth, client, token.LPName, token.LPSymbol, token.Decimal, common.HexToAddress(conf.LockProxyPip4), token.InitSupply)
 		if err != nil {
 			return ADDRESS_ZERO, fmt.Errorf(
 				fmt.Sprintf("fail while deploy Token %s from chain %d,", token.Name, conf.PolyChainID), err)
@@ -54,7 +54,7 @@ func DeployToken(gasMultiple float64, client *ethclient.Client, conf *config.Net
 	} else {
 		fmt.Println("lll", token.Name, token.Symbol, token.Decimal)
 
-		tx, txhash, _, err = abi.DeployERC20PreMint(auth, client, token.Name, token.Symbol, token.Decimal, pkCfg.SenderPublicKey, token.InitSupply)
+		tx, txhash, _, err = abi.DeployERC20PreMint(auth, client, token.Name, token.Symbol, token.Decimal, common.HexToAddress(pkCfg.SenderPublicKey), token.InitSupply)
 		if err != nil {
 			return ADDRESS_ZERO, fmt.Errorf(
 				fmt.Sprintf("fail while deploy Token %s from chain %d,", token.Name, conf.PolyChainID), err)
@@ -106,7 +106,7 @@ func BindLPandAsset(gasMultiple float64, client *ethclient.Client, conf *config.
 			err)
 	}
 	fmt.Println("222222")
-	LockProxyContract, err := abi.NewILockProxyWithLP(conf.LockProxyPip4, client)
+	LockProxyContract, err := abi.NewILockProxyWithLP(common.HexToAddress(conf.LockProxyPip4), client)
 	if err != nil {
 		return fmt.Errorf(
 			fmt.Sprintf("fail while bindLPToken %s and from chain %d =>to=> asset %x at chain %d,",
@@ -168,7 +168,7 @@ func BindLPToAsset(gasMultiple float64, client *ethclient.Client, conf *config.N
 				conf.PolyChainID),
 			err)
 	}
-	LockProxyContract, err := abi.NewILockProxyWithLP(conf.LockProxyPip4, client)
+	LockProxyContract, err := abi.NewILockProxyWithLP(common.HexToAddress(conf.LockProxyPip4), client)
 	if err != nil {
 		return fmt.Errorf(
 			fmt.Sprintf("fail while bindLPToken %s =>to=> asset %s at chain %d,",
@@ -209,7 +209,7 @@ func BindTokenPip4(gasMultiple float64, client *ethclient.Client, conf *config.N
 				toChainId),
 			err)
 	}
-	LockProxyContract, err := abi.NewILockProxyWithLP(conf.LockProxyPip4, client)
+	LockProxyContract, err := abi.NewILockProxyWithLP(common.HexToAddress(conf.LockProxyPip4), client)
 	if err != nil {
 		return fmt.Errorf(
 			fmt.Sprintf(
@@ -278,7 +278,7 @@ func BindProxyHashPip4(gasMultiple float64, client *ethclient.Client, conf *conf
 				toChainId),
 			err)
 	}
-	LockProxyContract, err := abi.NewILockProxyWithLP(conf.LockProxyPip4, client)
+	LockProxyContract, err := abi.NewILockProxyWithLP(common.HexToAddress(conf.LockProxyPip4), client)
 	if err != nil {
 		return fmt.Errorf(
 			fmt.Sprintf(
@@ -341,7 +341,7 @@ func BindLPandAeestBatch(gasMultiple float64, client *ethclient.Client, conf *co
 				conf.PolyChainID),
 			err)
 	}
-	LockProxyContract, err := abi.NewILockProxyWithLP(conf.LockProxyPip4, client)
+	LockProxyContract, err := abi.NewILockProxyWithLP(common.HexToAddress(conf.LockProxyPip4), client)
 	if err != nil {
 		return fmt.Errorf(
 			fmt.Sprintf(
@@ -383,3 +383,42 @@ func BindLPandAeestBatch(gasMultiple float64, client *ethclient.Client, conf *co
 	}
 	return nil
 }
+/*
+func Sendvialockproxy(gasMultiple float64, client *ethclient.Client, conf *config.Network, pkCfg *config.PrivateKey,
+	fromAddress []common.Address, fromLpAddress []common.Address, toChainId []uint64, toAsset [][]byte, toLPAddress [][]byte){
+	privateKey, err := crypto.HexToECDSA(pkCfg.LockProxyPip4OwnerPrivateKey)
+	if err != nil {
+		return fmt.Errorf(
+			fmt.Sprintf(
+				"fail while bind Token from chain %d",
+				conf.PolyChainID),
+			err)
+	}
+	LockProxyContract, err := abi.L
+	(conf.LockProxy, client)
+	if err != nil {
+		return fmt.Errorf(
+			fmt.Sprintf(
+				"fail while bind Token from chain %d",
+				conf.PolyChainID),
+			err)
+	}
+	chainId, err := client.ChainID(context.Background())
+	if err != nil {
+		return fmt.Errorf(
+			fmt.Sprintf(
+				"fail while bind Token from chain %d",
+				conf.PolyChainID),
+			err)
+	}
+	auth, err := MakeAuth(client, privateKey, DefaultGasLimit, gasMultiple, chainId)
+	if err != nil {
+		return fmt.Errorf(
+			fmt.Sprintf(
+				"fail while bind Token from chain %d",
+				conf.PolyChainID),
+			err)
+	}
+	tx, err := LockProxyContract.
+}
+*/

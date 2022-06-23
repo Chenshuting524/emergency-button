@@ -1,0 +1,17 @@
+2.0
+./pip4 -func bindToken -conf ../ConfigJson/2.0Config/devConfig.json -token ../ConfigJson/token/token.json
+./pip4 -func bindProxy -conf ../ConfigJson/2.0Config/devConfig.json 2 79
+
+1.0
+./pip4 -func deployToken -conf ../ConfigJson/1.0Config/config1.0.json  -token ../ConfigJson/token/token.json 960
+./pip4 -func bindProxy -conf ../ConfigJson/1.0Config/config1.0.json 920
+./pip4 -func bindToken -conf ../ConfigJson/1.0Config/config1.0.json -token ../ConfigJson/token/token.json 900 2 7 79 202 200
+
+./pip4 -func extractFeeSwapper -conf ../ConfigJson/1.0Config/config1.0.json
+./pip4 -func extractFeeWrapper -conf ../ConfigJson/1.0Config/config1.0.json
+
+
+mainnet
+./pip4 -func deployToken -conf ../ConfigJson/polyConfig.json  -token ../ConfigJson/token/token_mainnet.json 27
+./pip4 -func bindProxy -conf ../ConfigJson/polyConfig.json 900 2 7 79 202
+./pip4 -func bindToken -conf ../ConfigJson/polyConfig.json -token ../ConfigJson/token/token_mainnet.json 900 2 7 79 202 200

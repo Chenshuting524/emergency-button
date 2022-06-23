@@ -134,7 +134,7 @@ func bindContext(address common.Address, caller bind.ContractCaller, transactor 
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_Context *ContextRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -153,7 +153,7 @@ func (_Context *ContextRaw) Transact(opts *bind.TransactOpts, method string, par
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_Context *ContextCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -311,7 +311,7 @@ func bindERC20PreMint(address common.Address, caller bind.ContractCaller, transa
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_ERC20PreMint *ERC20PreMintRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -330,7 +330,7 @@ func (_ERC20PreMint *ERC20PreMintRaw) Transact(opts *bind.TransactOpts, method s
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_ERC20PreMint *ERC20PreMintCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -1065,7 +1065,7 @@ func bindIERC20(address common.Address, caller bind.ContractCaller, transactor b
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_IERC20 *IERC20Raw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -1084,7 +1084,7 @@ func (_IERC20 *IERC20Raw) Transact(opts *bind.TransactOpts, method string, param
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_IERC20 *IERC20CallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {

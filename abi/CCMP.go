@@ -158,7 +158,7 @@ func bindICCMP(address common.Address, caller bind.ContractCaller, transactor bi
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_ICCMP *ICCMPRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -177,7 +177,7 @@ func (_ICCMP *ICCMPRaw) Transact(opts *bind.TransactOpts, method string, params 
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_ICCMP *ICCMPCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {

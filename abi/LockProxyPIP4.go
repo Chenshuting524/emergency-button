@@ -171,7 +171,7 @@ func bindILockProxyWithLP(address common.Address, caller bind.ContractCaller, tr
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_ILockProxyWithLP *ILockProxyWithLPRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
@@ -190,7 +190,7 @@ func (_ILockProxyWithLP *ILockProxyWithLPRaw) Transact(opts *bind.TransactOpts, 
 }
 
 // Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
+// sets the key to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_ILockProxyWithLP *ILockProxyWithLPCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
