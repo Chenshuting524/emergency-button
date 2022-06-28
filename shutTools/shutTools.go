@@ -189,11 +189,11 @@ func BindToken(gasMultiple float64, client *ethclient.Client, conf *config.Netwo
 				toChainId),
 			err)
 	}
-	data, err := lockProxyAbi.Pack("bindAssetHash", token.Hex(),toChainId,toAsset)
+	data, err := lockProxyAbi.Pack("bindAssetHash", token,toChainId,toAsset)
 	if err != nil {
 		return fmt.Errorf(
 			fmt.Sprintf(
-				"fail while bind Token %s from chain %d =>to=> asset %x at chain %d,",
+				"2424 fail while bind Token %s from chain %d =>to=> asset %x at chain %d,",
 				token.Hex(),
 				conf.PolyChainID,
 				toAsset,
@@ -214,7 +214,7 @@ func BindToken(gasMultiple float64, client *ethclient.Client, conf *config.Netwo
 	lockProxy:=common.HexToAddress(conf.LockProxy)
 	gasLimit := auth.GasLimit
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: auth.From, To: &lockProxy, GasPrice: auth.GasPrice, Value: auth.Value, Data: data}
+		msg := ethereum.CallMsg{From: auth.From, To: &lockProxy,Value: auth.Value, Data: data}
 		gasLimit, err = client.EstimateGas(context.Background(), msg)
 		if err != nil {
 			return fmt.Errorf(
@@ -323,7 +323,7 @@ func BindProxyHash(gasMultiple float64, client *ethclient.Client, conf *config.N
 	lockProxy:=common.HexToAddress(conf.LockProxy)
 	gasLimit := auth.GasLimit
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: auth.From, To: &lockProxy, GasPrice: auth.GasPrice, Value: auth.Value, Data: data}
+		msg := ethereum.CallMsg{From: auth.From, To: &lockProxy,Value: auth.Value, Data: data}
 		gasLimit, err = client.EstimateGas(context.Background(), msg)
 		if err != nil {
 			return fmt.Errorf(fmt.Sprintf("fail while try to call bindProxyHash() from chain %d =>to=> asset %x at chain %d,",

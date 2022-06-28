@@ -1965,7 +1965,7 @@ func main() {
 
 		LptokenAddress, err := shutTools.DeployToken(multiple, client, netCfg, pkCfg, tokenConfig, pip4)
 		if err != nil {
-			log.Errorf("fail to dial client %s of network %d", netCfg.Provider, id)
+			log.Errorf("fail to deployToken %s", err)
 		}
 
 		log.Info("token deploy success, hash is %s", LptokenAddress)
